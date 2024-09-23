@@ -3,7 +3,7 @@ import { PaymentElement } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ idIntent }) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -14,18 +14,17 @@ export default function CheckoutForm() {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      // Stripe.js has not yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
 
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
+    console.log(idIntent)
+
+    const { error, id } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // Make sure to change this to your payment completion page
-        return_url: `${window.location.origin}/completion`,
+        return_url: `${window.location.origin}/tickets/${idIntent}`,
       },
     });
 
@@ -48,9 +47,9 @@ export default function CheckoutForm() {
           }
         }
       }} */ id="payment-element" />
-      <button disabled={isProcessing || !stripe || !elements} id="submit">
+      <button disabled={isProcessing || !stripe || !elements} className="text-white font-bold bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" id="submit">
         <span id="button-text">
-          {isProcessing ? "Procesando ... " : "Pagar"}
+          {isProcessing ? "Procesando... " : "Pagar"}
         </span>
       </button>
       {/* Show any error or success messages */}
